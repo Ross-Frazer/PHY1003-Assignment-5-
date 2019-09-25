@@ -1,0 +1,60 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+x1, x2 = 0, 17
+alpha, gamma, ro, sig = 1, 2, 0.5, 0.5
+n = 10
+
+def order_points(x1, x2):
+    if f(x1) <= f(x2):
+        x_best = x1
+        x_worst = x2
+    else:
+        x_best = x2
+        x_worst = x1
+    
+    return(x_best, x_worst)
+    
+def nelder_mead_step(x1, x2):
+      
+    x_best, x_worst = order_points(x1, x2)
+    x_cent = x_best
+    x_refl = x_cent + alpha*(x_cent - x_worst)
+
+    if f(x_refl) < f(x_best):
+        x_exp = x_cent + gamma*(x_refl - x_cent)
+        if f(x_exp) < f(x_refl):
+            x_worst = x_exp
+        else:
+            x_worst = x_refl
+            
+    else:
+        x_contr = x_cent + ro*(x_worst - x_cent)
+        if f(x_contr) < f(x_worst):
+            x_worst = x_contr
+        else:
+            x_worst = x_best + sig*(x_worst - x_best)
+    return(x_best, x_worst)
+
+def f(x):
+    return((x-7)**2 + 20)
+
+x = np.linspace(0, 15, 1000)    
+plt.plot(x, f(x), '--', linewidth=1, color='black')
+
+x1_array = np.zeros(n)
+x2_array = np.zeros(n)
+
+
+for i in range (n):
+    x1, x2 = nelder_mead_step(x1, x2)
+    x1_array[0] = 0
+    x1_array[i], x2_array[i] = nelder_mead_step(x1, x2)
+    #print(nelder_mead_step(x1, x2))
+plt.plot(x1_array, f(x1_array), '-o', color='red', linewidth=1)
+plt.show()
+print("Minimizing value of x (by 10 iterations of 1D Nelder-Mead): ", x1_array[9])
+
+
+
+    

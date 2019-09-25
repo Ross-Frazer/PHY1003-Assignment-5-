@@ -1,0 +1,41 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+a, b, l = 2, 3, 7
+v1, v2 = 299792458,  299792458/2
+
+x = np.linspace(0, 7, 1000)
+
+x0 = 8
+gam = 299792458/10
+n_iter = 100
+
+def T(x):
+    return(np.sqrt(x**2 + a**2)/v1 + np.sqrt((l-x)**2 + b**2)/v2)
+
+plt.plot(x, T(x), '--', linewidth=1, color='black')
+plt.xlabel('x')
+plt.ylabel('T')
+plt.show()
+plt.plot(x, T(x), '--', linewidth=1, color='black')
+print('Minimizing value of x (by brute force): ', x[np.argmin(T(x))])
+
+def verify(x100):
+    return(np.cos(np.arctan(b/(l-x100)))/np.cos(np.arctan(a/x100)))
+
+def df(x):
+    a, b, l = 2, 3, 7
+    v1, v2 = 299792458,  299792458/2
+    return ((x/(v1*(x**2 + a**2)**0.5))-(l-x)/(v2*((l-x)**2 + b**2)**0.5))
+
+x = x0
+for i in range (n_iter):    
+    x = x - gam*df(x)
+    plt.plot(x, T(x), 'o', color='red')
+plt.show()
+print(f"Minimizing value of x (by 100 iterations of gradient descent): {x}")
+print("sin(\u03F4_2)/sin(\u03F4_1): ", verify(x))
+print("v2/v1: ", v2/v1)
+    
+
+
